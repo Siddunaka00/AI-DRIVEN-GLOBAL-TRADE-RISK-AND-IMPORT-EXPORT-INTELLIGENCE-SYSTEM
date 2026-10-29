@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Navy/blue dashboard system. Light: pale-blue app bg, white cards, navy rail.
+   Dark: charcoal-navy surfaces with lighter blue/teal accents. Accent token is
+   named `copper` in Tailwind for historical reasons — value = primary accent. */
+:root {
+  --c-paper: #f5f8fe;
+  --c-panel: #ffffff;
+  --c-line: #e1eaf5;
+  --c-ink: #14213d;
+  --c-muted: #64748b;
+  --c-faint: #94a3b8;
+  --c-rail: #10264a;
+  --c-elevate: #eaf2ff;
+  /* RGB channels so Tailwind can produce alpha variants (ring-copper/40 etc.)
+     via color-mix even though the token is a CSS variable. */
+  --c-accent: #246bfd;
+  --c-accent-rgb: 36 107 253;
+  --c-accent-deep: #1d57d0;
+  --c-accent-soft: rgba(36, 107, 253, 0.09);
+  --c-teal: #19b89a;
+  --c-ok: #15803d;
+  --c-warn: #b45309;
+  --c-bad: #dc2626;
+}
+.dark {
+  --c-paper: #0b1220;
+  --c-panel: #142238;
+  --c-line: #263952;
+  --c-ink: #f1f5f9;
+  --c-muted: #a8b7cc;
+  --c-faint: #64748b;
+  --c-rail: #101c31;
+  --c-elevate: #192b43;
+  --c-accent: #60a5fa;
+  --c-accent-rgb: 96 165 250;
+  --c-accent-deep: #3b82f6;
+  --c-accent-soft: rgba(96, 165, 250, 0.12);
+  --c-teal: #2dd4bf;
+  --c-ok: #4ade80;
+  --c-warn: #fbbf24;
+  --c-bad: #f87171;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body { @apply bg-paper text-ink font-sans antialiased; }
+::selection { background: var(--c-accent-soft); }
+
+h1, h2 { font-family: var(--font-sans), system-ui, sans-serif; letter-spacing: -0.015em; }
+.serif { font-family: var(--font-sans), system-ui, sans-serif; letter-spacing: -0.01em; } /* academic redesign: sans headings */
+
+/* Accessible global focus ring (keyboard users only). */
+:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; border-radius: 4px; }
+
+/* thin terminal rules */
+.rule { @apply border-t border-line; }
+.label { @apply text-[11px] uppercase tracking-[0.14em] text-muted; }
+.num { font-variant-numeric: tabular-nums; }
+
+.input, select.input, textarea.input {
+  @apply w-full rounded-field border border-line bg-panel px-3 py-2 text-sm text-ink
+    placeholder:text-faint focus:border-copper focus:outline-none focus:ring-1 focus:ring-copper/40 transition-colors duration-fast;
+}
+.btn { @apply inline-flex items-center justify-center gap-1.5 rounded-field px-3.5 py-2 text-sm font-medium transition-all duration-fast select-none disabled:opacity-40 disabled:pointer-events-none whitespace-nowrap; }
+.btn-primary { @apply btn bg-copper text-white hover:bg-copper-deep active:translate-y-px shadow-lift; }
+.btn-ghost { @apply btn border border-line bg-transparent text-ink hover:border-copper hover:text-copper active:translate-y-px; }
+.btn-quiet { @apply btn text-muted hover:text-copper; }
+.card { @apply rounded-card border border-line bg-panel; }
+.chip { @apply inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-xs text-muted; }
+.chip-on { @apply border-copper text-copper bg-copper-soft; }
+
+/* score meter */
+.meter { @apply h-1.5 w-full overflow-hidden rounded-full bg-line; }
+.meter > i { @apply block h-full rounded-full bg-copper transition-all duration-phys; }
+
+/* skeleton shimmer for loading states */
+.skel { @apply rounded; background-color: var(--c-line); background-image: linear-gradient(90deg, transparent, var(--c-accent-soft), transparent); background-size: 400px 100%; animation: shimmer 1.4s linear infinite; }
+
+/* print only document previews */
+@media print { .no-print { display: none !important; } body { background: #fff; } }
+
+/* scrollbar, subtle */
+* { scrollbar-width: thin; scrollbar-color: var(--c-line) transparent; }
+
+/* ---- motion utilities (140–180ms, physical; reduced-motion honored) ---- */
+@keyframes toastIn { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes popIn   { from { opacity: 0; transform: translateY(4px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes spinIn  { from { transform: rotate(-90deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sheetUp { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.toast-in { animation: toastIn 160ms ease-out both; }
+.pop-in   { animation: popIn 150ms ease-out both; }
+.spin-in  { animation: spinIn 180ms ease-out both; }
+.sheet-up { animation: sheetUp 180ms cubic-bezier(.2,.8,.3,1) both; }
+.rise     { animation: rise 180ms ease-out both; }
+.stagger > * { animation: rise 180ms ease-out both; }
+.stagger > *:nth-child(2) { animation-delay: 40ms; }
+.stagger > *:nth-child(3) { animation-delay: 80ms; }
+.stagger > *:nth-child(4) { animation-delay: 120ms; }
+.stagger > *:nth-child(5) { animation-delay: 160ms; }
+.stagger > *:nth-child(6) { animation-delay: 200ms; }
+.lift { transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease; }
+.lift:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(26,25,22,.07), 0 14px 32px -14px rgba(26,25,22,.22); }
+.theme-anim, .theme-anim * { transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+/* hero: subtle drifting hatch — calm, no blobs */
+.hero-grid { background: linear-gradient(180deg, var(--c-elevate) 0%, var(--c-paper) 100%); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes hlPulse { 0%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-2px); } }
+.dot-pulse { display: inline-block; width: 5px; height: 5px; border-radius: 9999px; background: var(--c-accent); animation: hlPulse 1s ease-in-out infinite; }
+
+/* ---- Dark-mode accent overrides ------------------------------------------
+   The `copper` Tailwind token is a static hex palette (so alpha variants like
+   ring-copper/40 compile), while the light value is #246bfd. In dark mode the
+   accent must be the lighter #60a5fa. These rules override only the generated
+   utility classes when .dark is active — no component markup changes needed. */
+@layer utilities {
+  .dark .text-copper { color: #60a5fa; }
+  .dark .bg-copper { background-color: #3b82f6; }
+  .dark .bg-copper-soft { background-color: rgba(96, 165, 250, 0.12); }
+  .dark .border-copper { border-color: #60a5fa; }
+  .dark .ring-copper\/25 { --tw-ring-color: rgb(96 165 250 / 0.25); }
+  .dark .ring-copper\/30 { --tw-ring-color: rgb(96 165 250 / 0.3); }
+  .dark .ring-copper\/40 { --tw-ring-color: rgb(96 165 250 / 0.4); }
+  .dark .border-copper\/30 { border-color: rgb(96 165 250 / 0.3); }
+  .dark .border-copper\/40 { border-color: rgb(96 165 250 / 0.4); }
+  .dark .border-copper\/50 { border-color: rgb(96 165 250 / 0.5); }
+  .dark .border-copper\/60 { border-color: rgb(96 165 250 / 0.6); }
+  .dark .text-copper\/70 { color: rgb(96 165 250 / 0.7); }
+  .dark .btn-primary:hover { background-color: #2563eb; } /* lighter hover in dark */
+}
